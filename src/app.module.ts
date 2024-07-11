@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig, typeOrmConfig } from './app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './modules/post/post.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -19,6 +20,16 @@ import { PostModule } from './modules/post/post.module';
       inject: [ConfigService],
     }),
     PostModule,
+    ClientsModule.register([
+      {
+        name: 'REDIS',
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST,
+          port: Number(process.env.REDIS_PORT),
+        },
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService],
