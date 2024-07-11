@@ -14,7 +14,10 @@ export class PostService {
   async create(post: Post) {
     const _post = this.postRepository.create(post);
     const savedPost = await this.postRepository.save(_post);
-    this.redisClient.send({ cmd: 'ADD' }, savedPost);
+    this.redisClient.send(
+      { cmd: 'ADD' },
+      { key: `${savedPost.user_id}`, payload: savedPost },
+    );
     return savedPost;
   }
 }
